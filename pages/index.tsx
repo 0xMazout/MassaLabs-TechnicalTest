@@ -9,14 +9,13 @@ import groupLabel from "../components/groupLabel";
 import {queries} from "../queries/getGlobalData";
 import {useRef, useState} from "react";
 import {RequestManager, Client, HTTPTransport} from "@open-rpc/client-js";
+
 const Home: NextPage = () => {
 	const ipRef = useRef<HTMLInputElement>(null);
 	const stakingAddressRef = useRef<HTMLInputElement>(null);
-	const [response, setResponse] = useState(<div></div>);
-  const [responseStatus, setResponseStatus] = useState(<div></div>);
-  const [responseStakers, setResponseStakers] = useState(<div></div>);
-  const [responseAddresses, setResponseAddresses] = useState(<div></div>);
-	// const [addressValue, setAddressValue] = useState("");
+	const [responseStatus, setResponseStatus] = useState(<div></div>);
+	const [responseStakers, setResponseStakers] = useState(<div></div>);
+	const [responseAddresses, setResponseAddresses] = useState(<div></div>);
 
 	//setup front components
 	const nodeAddress = groupLabel({
@@ -34,7 +33,7 @@ const Home: NextPage = () => {
 		ref: stakingAddressRef,
 	});
 
-  //setup rpc client
+	//setup rpc client
 	const transport = new HTTPTransport(
 		ipRef.current?.value ? ipRef.current.value : "",
 	);
@@ -48,10 +47,14 @@ const Home: NextPage = () => {
 				method: queries.getStakers,
 			})
 			.then((result) => {
-        setResponseStakers(displayAlert(result.success, result.message ,queries.getStakers));
+				setResponseStakers(
+					displayAlert(result.success, result.message, queries.getStakers),
+				);
 			})
 			.catch((error) => {
-        setResponseStakers(displayAlert(false, error.message, queries.getStakers));
+				setResponseStakers(
+					displayAlert(false, error.message, queries.getStakers),
+				);
 			});
 
 		await client
@@ -62,66 +65,81 @@ const Home: NextPage = () => {
 					: [],
 			})
 			.then((result) => {
-        setResponseAddresses(displayAlert(result.success, result.message, queries.getAddresses));
+				setResponseAddresses(
+					displayAlert(result.success, result.message, queries.getAddresses),
+				);
 			})
 			.catch((error) => {
-        setResponseAddresses(displayAlert(false, error.message, queries.getAddresses));
+				setResponseAddresses(
+					displayAlert(false, error.message, queries.getAddresses),
+				);
 			});
 
-    await client
-      .request({
-        method: queries.getStatus,
-      })
-      .then((result) => {
-        setResponseStatus(displayAlert(result.success, result.message, queries.getStatus));
-      })
-      .catch((error) => {
-        setResponseStatus(displayAlert(false, error.message, queries.getStatus));
-      });
-    }
-    //Display the alert 
-    const displayAlert = (success: boolean , message:string , methodname:string) => {
-
-      return (
-        success ? <div className="alert alert-success shadow-lg mt-4 w-2/6">
-        <div>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="stroke-current flex-shrink-0 h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span>Success : {message} on Method : {methodname}</span>
-        </div>
-      </div> :
-        <div className="alert alert-warning shadow-lg mt-4 w-2/6">
-					<div>
-						<svg
-							xmlns="http://www.w3.org/2000/svg"
-							className="stroke-current flex-shrink-0 h-6 w-6"
-							fill="none"
-							viewBox="0 0 24 24"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth="2"
-								d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-							/>
-						</svg>
-						<span>Warning: {message} on Method : {methodname}</span>
-					</div>
+		await client
+			.request({
+				method: queries.getStatus,
+			})
+			.then((result) => {
+				setResponseStatus(
+					displayAlert(result.success, result.message, queries.getStatus),
+				);
+			})
+			.catch((error) => {
+				setResponseStatus(
+					displayAlert(false, error.message, queries.getStatus),
+				);
+			});
+	};
+	//Display the alert
+	const displayAlert = (
+		success: boolean,
+		message: string,
+		methodname: string,
+	) => {
+		return success ? (
+			<div className="alert alert-success shadow-lg mt-4 w-2/6">
+				<div>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						className="stroke-current flex-shrink-0 h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+						/>
+					</svg>
+					<span>
+						Success : {message} on Method : {methodname}
+					</span>
 				</div>
-      )}
-
-
+			</div>
+		) : (
+			<div className="alert alert-warning shadow-lg mt-4 w-2/6">
+				<div>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						className="stroke-current flex-shrink-0 h-6 w-6"
+						fill="none"
+						viewBox="0 0 24 24"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							strokeWidth="2"
+							d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+						/>
+					</svg>
+					<span>
+						Warning: {message} on Method : {methodname}
+					</span>
+				</div>
+			</div>
+		);
+	};
 
 	// const createQuery = (ipValue: string) => {
 	// 	const query = {
@@ -202,8 +220,8 @@ const Home: NextPage = () => {
 					Submit
 				</button>
 				{responseStatus}
-        {responseStakers}
-        {responseAddresses}
+				{responseStakers}
+				{responseAddresses}
 			</main>
 		</div>
 	);
